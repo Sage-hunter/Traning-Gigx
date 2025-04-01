@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Expense Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar">
+                <div class="d-flex flex-column p-3">
+                    <h2 class="text-center mb-4">Smart Expense Tracker</h2>
+                    <ul class="nav nav-pills flex-column mb-auto">
+                        <li class="nav-item">
+                            <a href="#dashboard" class="nav-link active" data-bs-toggle="tab">
+                                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#expenses" class="nav-link" data-bs-toggle="tab">
+                                <i class="bi bi-cash-coin me-2"></i> Expenses
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#insights" class="nav-link" data-bs-toggle="tab">
+                                <i class="bi bi-lightbulb me-2"></i> Insights
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#settings" class="nav-link" data-bs-toggle="tab">
+                                <i class="bi bi-gear me-2"></i> Settings
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <div class="tab-content">
+                    <!-- Dashboard Tab -->
+                    <div class="tab-pane fade show active" id="dashboard">
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <h3>Dashboard</h3>
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="stat-card">
+                                                    <h5>Total Expenses</h5>
+                                                    <h2 id="totalExpenses">$0.00</h2>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="stat-card">
+                                                    <h5>Monthly Budget</h5>
+                                                    <h2 id="monthlyBudget">$1,000.00</h2>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="stat-card">
+                                                    <h5>Remaining</h5>
+                                                    <h2 id="remainingBudget">$1,000.00</h2>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="card shadow-sm h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Spending by Category</h5>
+                                        <div class="chart-container">
+                                            <canvas id="categoryChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="card shadow-sm h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Monthly Spending Trend</h5>
+                                        <div class="chart-container">
+                                            <canvas id="trendChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Recent Expenses</h5>
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>Description</th>
+                                                        <th>Category</th>
+                                                        <th>Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="recentExpensesTable">
+                                                    <!-- Recent expenses will be populated here -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expenses Tab -->
+                    <div class="tab-pane fade" id="expenses">
+                        <div class="row">
+                            <div class="col-md-12 mb-4">
+                                <h3>Add New Expense</h3>
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <form id="expenseForm">
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="expenseDescription" class="form-label">Description</label>
+                                                    <input type="text" class="form-control" id="expenseDescription" required>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="expenseAmount" class="form-label">Amount ($)</label>
+                                                    <input type="number" class="form-control" id="expenseAmount" step="0.01" min="0.01" required>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="expenseCategory" class="form-label">Category</label>
+                                                    <select class="form-select" id="expenseCategory" required>
+                                                        <option value="">Select a category</option>
+                                                        <option value="Food">Food</option>
+                                                        <option value="Transport">Transport</option>
+                                                        <option value="Shopping">Shopping</option>
+                                                        <option value="Bills">Bills</option>
+                                                        <option value="Entertainment">Entertainment</option>
+                                                        <option value="Health">Health</option>
+                                                        <option value="Other">Other</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="expenseDate" class="form-label">Date</label>
+                                                    <input type="date" class="form-control" id="expenseDate" required>
+                                                </div>
+                                            </div>
+                                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                                <button type="submit" class="btn btn-primary">Add Expense</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>Expense History</h3>
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>Description</th>
+                                                        <th>Category</th>
+                                                        <th>Amount</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="expenseTable">
+                                                    <!-- Expenses will be populated here -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Insights Tab -->
+                    <div class="tab-pane fade" id="insights">
+                        <div class="row">
+                            <div class="col-md-12 mb-4">
+                                <h3>Spending Insights</h3>
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <div id="insightsContainer">
+                                            <!-- Insights will be populated here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>Budget Alerts</h3>
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <div id="alertsContainer">
+                                            <!-- Alerts will be populated here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Tab -->
+                    <div class="tab-pane fade" id="settings">
+                        <div class="row">
+                            <div class="col-md-12 mb-4">
+                                <h3>Budget Settings</h3>
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <form id="budgetForm">
+                                            <div class="mb-3">
+                                                <label for="monthlyBudgetInput" class="form-label">Monthly Budget ($)</label>
+                                                <input type="number" class="form-control" id="monthlyBudgetInput" step="10" min="0" value="1000">
+                                            </div>
+                                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                                <button type="submit" class="btn btn-primary">Save Settings</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>Data Management</h3>
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button id="exportData" class="btn btn-success">Export Data</button>
+                                            <button id="clearData" class="btn btn-danger">Clear All Data</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+<style>
+    :root {
+    --primary-color: #6366f1;
+    --secondary-color: #8b5cf6;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --warning-color: #f59e0b;
+    --info-color: #3b82f6;
+    --light-color: #f3f4f6;
+    --dark-color: #1f2937;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.sidebar {
+    background-color: var(--dark-color);
+    color: white;
+    min-height: 100vh;
+    padding-top: 20px;
+    position: sticky;
+    top: 0;
+}
+
+.sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+.sidebar .nav-link:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar .nav-link.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.main-content {
+    padding: 30px;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    text-align: center;
+}
+
+.stat-card h2 {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.chart-container {
+    position: relative;
+    height: 250px;
+    width: 100%;
+}
+
+.alert-card {
+    border-left: 4px solid var(--warning-color);
+    background-color: rgba(245, 158, 11, 0.1);
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+.insight-card {
+    border-left: 4px solid var(--info-color);
+    background-color: rgba(59, 130, 246, 0.1);
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        min-height: auto;
+        position: static;
+    }
+    
+    .main-content {
+        padding: 15px;
+    }
+}
+
+</style>
+<script>
+    // Initialize the application when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize the app
+    initApp();
+    
+    // Set up event listeners
+    setupEventListeners();
+    
+    // Load and display data
+    loadAndDisplayData();
+});
+
+// Global variables
+let expenses = [];
+let monthlyBudget = 1000; // Default budget
+
+// Initialize the application
+function initApp() {
+    // Set current date as default for the expense date input
+    document.getElementById('expenseDate').valueAsDate = new Date();
+    
+    // Load data from localStorage
+    loadData();
+    
+    // Initialize Bootstrap tabs
+    const triggerTabList = [].slice.call(document.querySelectorAll('.nav-link'));
+    triggerTabList.forEach(function (triggerEl) {
+        const tabTrigger = new bootstrap.Tab(triggerEl);
+        
+        triggerEl.addEventListener('click', function (event) {
+            event.preventDefault();
+            tabTrigger.show();
+        });
+    });
+}
+
+// Set up event listeners
+function setupEventListeners() {
+    // Expense form submission
+    document.getElementById('expenseForm').addEventListener('submit', handleExpenseFormSubmit);
+    
+    // Budget form submission
+    document.getElementById('budgetForm').addEventListener('submit', handleBudgetFormSubmit);
+    
+    // Data management buttons
+    document.getElementById('exportData').addEventListener('click', exportData);
+    document.getElementById('clearData').addEventListener('click', clearData);
+}
+
+// Handle expense form submission
+function handleExpenseFormSubmit(event) {
+    event.preventDefault();
+    
+    // Get form values
+    const description = document.getElementById('expenseDescription').value;
+    const amount = parseFloat(document.getElementById('expenseAmount').value);
+    const category = document.getElementById('expenseCategory').value;
+    const date = document.getElementById('expenseDate').value;
+    
+    // Create expense object
+    const expense = {
+        id: Date.now(), // Unique ID based on timestamp
+        description: description,
+        amount: amount,
+        category: category,
+        date: date
+    };
+    
+    // Add to expenses array
+    expenses.push(expense);
+    
+    // Save to localStorage
+    saveData();
+    
+    // Reset form
+    document.getElementById('expenseForm').reset();
+    document.getElementById('expenseDate').valueAsDate = new Date();
+    
+    // Update UI
+    loadAndDisplayData();
+    
+    // Show success message
+    showAlert('Expense added successfully!', 'success');
+    
+    // Auto-categorize if category is not selected
+    if (category === 'Other') {
+        autoCategorize(expense);
+    }
+}
+
+// Handle budget form submission
+function handleBudgetFormSubmit(event) {
+    event.preventDefault();
+    
+    // Get form value
+    const newBudget = parseFloat(document.getElementById('monthlyBudgetInput').value);
+    
+    // Update budget
+    monthlyBudget = newBudget;
+    
+    // Save to localStorage
+    localStorage.setItem('monthlyBudget', monthlyBudget);
+    
+    // Update UI
+    updateDashboardStats();
+    generateInsights();
+    
+    // Show success message
+    showAlert('Budget updated successfully!', 'success');
+}
+
+// Auto-categorize expense using simple rule-based logic
+function autoCategorize(expense) {
+    const description = expense.description.toLowerCase();
+    
+    // Simple rule-based categorization
+    const categories = {
+        'Food': ['restaurant', 'cafe', 'coffee', 'lunch', 'dinner'],
+    }}
+
+
+
+
+
+    const mongoose = require('mongoose');
+
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGO_URI);
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error(`Error: ${error.message}`);
+    process.exit(1);
+  }
+};
+
+module.exports = connectDB;
+
+
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+
+const UserSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'Please add a name']
+  },
+  email: {
+    type: String,
+    required: [true, 'Please add an email'],
+    unique: true,
+    match: [
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+      'Please add a valid email'
+    ]
+  },
+  password: {
+    type: String,
+    required: [true, 'Please add a password'],
+    minlength: 6,
+    select: false
+  },
+  monthlyBudget: {
+    type: Number,
+    default: 1000
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+// Encrypt password using bcrypt
+UserSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) {
+    next();
+  }
+  
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
+// Match user entered password to hashed password in database
+UserSchema.methods.matchPassword = async function(enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
+
+module.exports = mongoose.model('User', UserSchema);
+const mongoose = require('mongoose');
+
+const ExpenseSchema = new mongoose.Schema({
+  description: {
+    type: String,
+    required: [true, 'Please add a description'],
+    trim: true
+  },
+  amount: {
+    type: Number,
+    required: [true, 'Please add an amount']
+  },
+  category: {
+    type: String,
+    required: [true, 'Please add a category'],
+    enum: ['Food', 'Transport', 'Shopping', 'Bills', 'Entertainment', 'Health', 'Other']
+  },
+  date: {
+    type: Date,
+    default: Date.now
+  },
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+module.exports = mongoose.model('Expense', ExpenseSchema);
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+
+exports.protect = async (req, res, next) => {
+  let token;
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) {
+    return res.status(401).json({ success: false, message: 'Not authorized to access this route' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await User.findById(decoded.id);
+    next();
+  } catch (err) {
+    return res.status(401).json({ success: false, message: 'Not authorized to access this route' });
+  }
+};
+const User = require('../models/User');
+const jwt = require('jsonwebtoken');
+
+// Generate JWT Token
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: '30d'
+  });
+};
+
+// @desc    Register user
+// @route   POST /api/auth/register
+// @access  Public
+exports.register = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // Check if user exists
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({ success: false, message: 'User already exists' });
+    }
+
+    // Create user
+    const user = await User.create({
+      name,
+      email,
+      password
+    });
+
+    if (user) {
+      res.status(201).json({
+        success: true,
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          monthlyBudget: user.monthlyBudget
+        },
+        token: generateToken(user._id)
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Login user
+// @route   POST /api/auth/login
+// @access  Public
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Check for user
+    const user = await User.findOne({ email }).select('+password');
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+
+    // Check if password matches
+    const isMatch = await user.matchPassword(password);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+
+    res.status(200).json({
+      success: true,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        monthlyBudget: user.monthlyBudget
+      },
+      token: generateToken(user._id)
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Get current logged in user
+// @route   GET /api/auth/me
+// @access  Private
+exports.getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    
+    res.status(200).json({
+      success: true,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        monthlyBudget: user.monthlyBudget
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Update user budget
+// @route   PUT /api/auth/budget
+// @access  Private
+exports.updateBudget = async (req, res) => {
+  try {
+    const { monthlyBudget } = req.body;
+    
+    const user = await User.findByIdAndUpdate(
+      req.user.id, 
+      { monthlyBudget }, 
+      { new: true }
+    );
+    
+    res.status(200).json({
+      success: true,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        monthlyBudget: user.monthlyBudget
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+const Expense = require('../models/Expense');
+
+// @desc    Get all expenses for a user
+// @route   GET /api/expenses
+// @access  Private
+exports.getExpenses = async (req, res) => {
+  try {
+    const expenses = await Expense.find({ user: req.user.id }).sort({ date: -1 });
+    
+    res.status(200).json({
+      success: true,
+      count: expenses.length,
+      data: expenses
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Add new expense
+// @route   POST /api/expenses
+// @access  Private
+exports.addExpense = async (req, res) => {
+  try {
+    req.body.user = req.user.id;
+    
+    const expense = await Expense.create(req.body);
+    
+    res.status(201).json({
+      success: true,
+      data: expense
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Get single expense
+// @route   GET /api/expenses/:id
+// @access  Private
+exports.getExpense = async (req, res) => {
+  try {
+    const expense = await Expense.findById(req.params.id);
+    
+    if (!expense) {
+      return res.status(404).json({ success: false, message: 'Expense not found' });
+    }
+    
+    // Make sure user owns the expense
+    if (expense.user.toString() !== req.user.id) {
+      return res.status(401).json({ success: false, message: 'Not authorized to access this expense' });
+    }
+    
+    res.status(200).json({
+      success: true,
+      data: expense
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Update expense
+// @route   PUT /api/expenses/:id
+// @access  Private
+exports.updateExpense = async (req, res) => {
+  try {
+    let expense = await Expense.findById(req.params.id);
+    
+    if (!expense) {
+      return res.status(404).json({ success: false, message: 'Expense not found' });
+    }
+    
+    // Make sure user owns the expense
+    if (expense.user.toString() !== req.user.id) {
+      return res.status(401).json({ success: false, message: 'Not authorized to update this expense' });
+    }
+    
+    expense = await Expense.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    });
+    
+    res.status(200).json({
+      success: true,
+      data: expense
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Delete expense
+// @route   DELETE /api/expenses/:id
+// @access  Private
+exports.deleteExpense = async (req, res) => {
+  try {
+    const expense = await Expense.findById(req.params.id);
+    
+    if (!expense) {
+      return res.status(404).json({ success: false, message: 'Expense not found' });
+    }
+    
+    // Make sure user owns the expense
+    if (expense.user.toString() !== req.user.id) {
+      return res.status(401).json({ success: false, message: 'Not authorized to delete this expense' });
+    }
+    
+    await expense.remove();
+    
+    res.status(200).json({
+      success: true,
+      data: {}
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Get expense statistics
+// @route   GET /api/expenses/stats
+// @access  Private
+exports.getExpenseStats = async (req, res) => {
+  try {
+    // Get total expenses
+    const totalExpenses = await Expense.aggregate([
+      { $match: { user: req.user._id } },
+      { $group: { _id: null, total: { $sum: '$amount' } } }
+    ]);
+    
+    // Get expenses by category
+    const expensesByCategory = await Expense.aggregate([
+      { $match: { user: req.user._id } },
+      { $group: { _id: '$category', total: { $sum: '$amount' } } }
+    ]);
+    
+    // Get monthly expenses
+    const monthlyExpenses = await Expense.aggregate([
+      { $match: { user: req.user._id } },
+      {
+        $group: {
+          _id: { 
+            year: { $year: '$date' }, 
+            month: { $month: '$date' } 
+          },
+          total: { $sum: '$amount' }
+        }
+      },
+      { $sort: { '_id.year': -1, '_id.month': -1 } }
+    ]);
+    
+    res.status(200).json({
+      success: true,
+      data: {
+        totalExpenses: totalExpenses.length > 0 ? totalExpenses[0].total : 0,
+        expensesByCategory,
+        monthlyExpenses
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+const express = require('express');
+const { register, login, getMe, updateBudget } = require('../controllers/auth');
+const { protect } = require('../middleware/auth');
+
+const router = express.Router();
+
+router.post('/register', register);
+router.post('/login', login);
+router.get('/me', protect, getMe);
+router.put('/budget', protect, updateBudget);
+
+module.exports = router;
+const express = require('express');
+const { 
+  getExpenses, 
+  addExpense, 
+  getExpense, 
+  updateExpense, 
+  deleteExpense,
+  getExpenseStats
+} = require('../controllers/expenses');
+const { protect } = require('../middleware/auth');
+
+const router = express.Router();
+
+router.route('/')
+  .get(protect, getExpenses)
+  .post(protect, addExpense);
+
+router.get('/stats', protect, getExpenseStats);
+
+router.route('/:id')
+  .get(protect, getExpense)
+  .put(protect, updateExpense)
+  .delete(protect, deleteExpense);
+
+module.exports = router;
+
+const express = require('express');
+const { 
+  getExpenses, 
+  addExpense, 
+  getExpense, 
+  updateExpense, 
+  deleteExpense,
+  getExpenseStats
+} = require('../controllers/expenses');
+const { protect } = require('../middleware/auth');
+
+const router = express.Router();
+
+router.route('/')
+  .get(protect, getExpenses)
+  .post(protect, addExpense);
+
+router.get('/stats', protect, getExpenseStats);
+
+router.route('/:id')
+  .get(protect, getExpense)
+  .put(protect, updateExpense)
+  .delete(protect, deleteExpense);
+
+module.exports = router;
+const express = require('express');
+const dotenv = require('dotenv');
+const cors = require('cors');
+const connectDB = require('./config/db');
+
+// Load env vars
+dotenv.config();
+
+// Connect to database
+connectDB();
+
+// Route files
+const auth = require('./routes/auth');
+const expenses = require('./routes/expenses');
+
+const app = express();
+
+// Body parser
+app.use(express.json());
+
+// Enable CORS
+app.use(cors());
+
+// Mount routers
+app.use('/api/auth', auth);
+app.use('/api/expenses', expenses);
+
+// Basic route
+app.get('/', (req, res) => {
+  res.send('Expense Tracker API is running...');
+});
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+</script>
+
+<json>
+    "scripts": {
+        "start": "node server.js",
+        "dev": "nodemon server.js"
+      }
+      
+</json>
+
+<bash>
+    mkdir expense-tracker-backend
+cd expense-tracker-backend
+npm init -y
+npm install express mongoose dotenv bcryptjs jsonwebtoken cors
+npm install --save-dev nodemon
+mkdir controllers models routes middleware config
+touch server.js .env
+npm <run class="dev"></run>
+
+</bash>
+<text>
+    MONGO_URI=mongodb+srv://<username>:<password>@<clustername>.mongodb.net/expense-tracker
+        PORT=5000
+        JWT_SECRET=your_jwt_secret_key
+        
+</text>
